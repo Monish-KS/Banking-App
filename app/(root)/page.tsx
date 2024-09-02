@@ -42,7 +42,7 @@ const Home = async ({searchParams: {id,page}}:SearchParamProps) => {
       </div>
       <RightSidebar 
       user={loggedIn} 
-      transactions={[account?.transactions]} 
+      transactions={account?.transactions} 
       banks={accountsData?.slice(0,2)} />
     </section>
   );
