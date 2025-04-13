@@ -11,7 +11,7 @@ export default function RootLayout({
         <div className="auth-asset">
           <div>
             <Image 
-            src = '/icons/dawn-3.png'
+            src = '/icons/Dawn-3.png'
             alt='Auth image'
             width={900}
             height={800}
