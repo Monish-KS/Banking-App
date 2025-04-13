@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Horizon - A Fintech Bank Application
 
-## Getting Started
+Built with Next.js, Horizon is a financial SaaS platform that connects to multiple bank accounts, displays transactions in real-time, allows users to transfer money to other platform users, and manages their finances altogether.
 
-First, run the development server:
+This project was built step by step with our detailed tutorial on the JavaScript Mastery YouTube channel. Join the JSM family!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📋 Table of Contents
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-   [🤖 Introduction](#-introduction)
+-   [⚙️ Tech Stack](#️-tech-stack)
+-   [🔋 Features](#-features)
+-   [🤸 Quick Start](#-quick-start)
+-   [🕸️ Code Snippets to Copy](#️-code-snippets-to-copy)
+-   [🔗 Assets](#-assets)
+-   [🚀 More](#-more)
+-   [🚨 Tutorial](#-tutorial)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🤖 Introduction
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Built with Next.js, Horizon is a financial SaaS platform that connects to multiple bank accounts, displays transactions in real-time, allows users to transfer money to other platform users, and manages their finances altogether.
 
-## Learn More
+If you're getting started and need assistance or face any bugs, join our active Discord community with over 34k+ members. It's a place where people help each other out.
 
-To learn more about Next.js, take a look at the following resources:
+## ⚙️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+-   Next.js
+-   TypeScript
+-   Appwrite
+-   Plaid
+-   Dwolla
+-   React Hook Form
+-   Zod
+-   TailwindCSS
+-   Chart.js
+-   ShadCN
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 🔋 Features
 
-## Deploy on Vercel
+-   **👉 Authentication:** An ultra-secure SSR authentication with proper validations and authorization
+-   **👉 Connect Banks:** Integrates with Plaid for multiple bank account linking
+-   **👉 Home Page:** Shows general overview of user account with total balance from all connected banks, recent transactions, money spent on different categories, etc
+-   **👉 My Banks:** Check the complete list of all connected banks with respective balances, account details
+-   **👉 Transaction History:** Includes pagination and filtering options for viewing transaction history of different banks
+-   **👉 Real-time Updates:** Reflects changes across all relevant pages upon connecting new bank accounts.
+-   **👉 Funds Transfer:** Allows users to transfer funds using Dwolla to other accounts with required fields and recipient bank ID.
+-   **👉 Responsiveness:** Ensures the application adapts seamlessly to various screen sizes and devices, providing a consistent user experience across desktop, tablet, and mobile platforms.
+-   and many more, including code architecture and reusability.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Test User
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+For testing the website, you can use the following credentials:
+
+-   **Email:** testuser@gmail.com
+-   **Password:** testuser123
+
+
+## 🤸 Quick Start
+
+1.  Clone the repository:
+
+    ```bash
+    git clone <repository_url>
+    cd <repository_name>
+    ```
+
+2.  Install dependencies:
+
+    ```bash
+    npm install
+    # or
+    yarn install
+    # or
+    pnpm install
+    ```
+
+3.  Configure environment variables:
+
+    -   Create a `.env` file in the project root.
+    -   Add the necessary environment variables (Appwrite, Plaid, Dwolla, Sentry, etc.). See the `.env.example` file for a template.
+
+4.  Run the development server:
+
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    # or
+    pnpm dev
+    ```
+
+5.  Open your browser and navigate to `http://localhost:3000`.
+
+## 🕸️ Code Snippets to Copy
+
+*(This section would contain useful code snippets from the project. I'll leave it empty for now, but you can add relevant snippets later.)*
+
+## 🔗 Assets
+
+*(This section would contain links to any relevant assets, such as design files, API documentation, etc. I'll leave it empty for now.)*
+
+## 🚀 More
+
+For a complete understanding of the project, please refer to the tutorial on JavaScript Mastery YouTube channel.
+
+## 🚨 Tutorial
+
+[Link to JavaScript Mastery YouTube Tutorial]
+
