@@ -1,3 +1,5 @@
+"use client"; // Mark this component as a Client Component
+
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import  {PlaidLinkOnSuccess, PlaidLinkOptions, usePlaidLink } from 'react-plaid-link'
@@ -5,30 +7,40 @@ import { useRouter } from 'next/navigation';
 import { createLinkToken, exchangePublicToken } from '@/lib/actions/user.actions';
 import Image from 'next/image';
 
-const PlaidLink = ({user, variant} : PlaidLinkProps) => {
+
+
+const PlaidLink = ({ user, variant, accessToken }: PlaidLinkProps) => { // Add accessToken prop
     const router = useRouter();
     const [token, setToken] = useState('');
     
     useEffect(() =>{
         const getLinkToken = async () => {
-            const data = await createLinkToken(user);
+            // Pass accessToken if it exists to generate an update mode token
+            const data = await createLinkToken(user, accessToken);
             setToken(data?.linkToken);
             
         }
         
         getLinkToken();
-    },[user]);
+    }, [user, accessToken]); // Add accessToken to dependency array
     const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token: string) => {
     
-         await exchangePublicToken({
-             publicToken: public_token,
-             user,
-        })
+        // Only exchange public token if NOT in update mode (i.e., accessToken was not provided)
+        if (!accessToken) {
+          await exchangePublicToken({
+            publicToken: public_token,
+            user,
+          });
+        }
+        // In update mode, onSuccess signifies the user granted new permissions.
+        // A page refresh or data re-fetch might be appropriate here.
         router.push('/');
-    } , [user])
+    }, [user, accessToken, router]) // Add accessToken and router to dependency array
     const config: PlaidLinkOptions = {
         token,
-        onSuccess
+        onSuccess,
+        env: 'sandbox',
+        product: ['transactions'],
     }
 
     const { open, ready} = usePlaidLink(config);

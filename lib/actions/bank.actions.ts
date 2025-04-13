@@ -97,9 +97,30 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       institutionId: accountsResponse.data.item.institution_id!,
     });
 
-    const transactions = await getTransactions({
+    let transactionsResult = await getTransactions({ // Change const to let
       accessToken: bank?.accessToken,
     });
+
+    // Check if getTransactions returned a consent error
+    if (transactionsResult?.error === 'consent_required') {
+      return parseStringify({
+        error: 'consent_required',
+        accessToken: bank.accessToken, // Pass the token needed for update mode
+        data: accountData, // Include basic account data for context if needed
+        institution: institution // Include institution data if needed
+      });
+    }
+
+    // If other error or no transactions, handle appropriately (maybe return empty array or the error)
+    if (transactionsResult?.error) {
+        // Handle other errors from getTransactions if necessary, or just return empty transactions
+        console.error("Error fetching transactions in getAccount:", transactionsResult.error);
+        // Depending on desired behavior, you might return the error or just empty transactions
+        // For now, let's proceed with empty transactions if there was another error
+         transactionsResult = []; // Fallback to empty array for other errors or if no data
+    }
+
+    const transactions = transactionsResult; // Assign if no consent error
 
     const account = {
       id: accountData.account_id,
@@ -114,10 +135,12 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       appwriteItemId: bank.$id,
     };
 
-    // // sort transactions by date such that the most recent transaction is first
-     const allTransactions = [...transactions, ...transferTransactions ].sort(
+    // sort transactions by date such that the most recent transaction is first
+    // Ensure transactions is an array before spreading
+    const plaidTransactions = Array.isArray(transactions) ? transactions : [];
+    const allTransactions = [...plaidTransactions, ...transferTransactions].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-     );
+    );
 
     return parseStringify({
       data: account,
@@ -146,41 +169,61 @@ export const getInstitution = async ({
   }
 };
 
-// Get transactions
+// Get transactions using /transactions/get (more aligned with reference repo likely)
 export const getTransactions = async ({
   accessToken,
 }: getTransactionsProps) => {
-  let hasMore = true;
   let transactions: any = [];
 
   try {
-    // Iterate through each page of new transaction updates for item
-    while (hasMore) {
-      const response = await plaidClient.transactionsSync({
-        access_token: accessToken,
-      });
+    // Calculate start and end dates (e.g., last 30 days)
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
 
-      const data = response.data;
+    const startDate = thirtyDaysAgo.toISOString().split('T')[0]; // YYYY-MM-DD
+    const endDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
 
-      transactions = response.data.added.map((transaction) => ({
-        id: transaction.transaction_id,
-        name: transaction.name,
-        paymentChannel: transaction.payment_channel,
-        type: transaction.payment_channel,
-        accountId: transaction.account_id,
-        amount: transaction.amount,
-        pending: transaction.pending,
-        category: transaction.category ? transaction.category[0] : "",
-        date: transaction.date,
-        image: transaction.logo_url,
-      }));
+    // Fetch transactions using /transactions/get
+    const response = await plaidClient.transactionsGet({
+      access_token: accessToken,
+      start_date: startDate,
+      end_date: endDate,
+      options: {
+        count: 500, // Fetch up to 500 transactions (adjust as needed)
+        offset: 0,
+      },
+    });
 
-      hasMore = data.has_more;
-    }
+    transactions = response.data.transactions.map((transaction) => ({
+      id: transaction.transaction_id,
+      name: transaction.name,
+      paymentChannel: transaction.payment_channel,
+      type: transaction.merchant_name ? 'merchant' : transaction.payment_channel, // Example type logic
+      accountId: transaction.account_id,
+      amount: transaction.amount,
+      pending: transaction.pending,
+      category: transaction.category ? transaction.category[0] : "",
+      date: transaction.date,
+      image: transaction.logo_url, // Note: logo_url might not be available on /transactions/get
+    }));
+
+    // Note: /transactions/get pagination is handled via offset/count if needed,
+    // but for simplicity here, we fetch one large batch.
 
     return parseStringify(transactions);
-  } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
+
+  } catch (error: any) {
+    console.error("An error occurred while getting the transactions:", error);
+    // Keep the detailed error handling for consent issues etc.
+    if (error?.response?.data?.error_code) {
+      if (error.response.data.error_code === 'ADDITIONAL_CONSENT_REQUIRED') {
+        return parseStringify({ error: 'consent_required' });
+      } else {
+        return parseStringify({ error: 'plaid_error', code: error.response.data.error_code, message: error.response.data.error_message });
+      }
+    }
+    return parseStringify({ error: 'unknown' }); // Return generic error
   }
 };
 

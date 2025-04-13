@@ -1,4 +1,5 @@
 import HeaderBox from "@/components/HeaderBox";
+import PlaidLink from "@/components/PlaidLink"; // Import PlaidLink
 import { Pagination } from "@/components/Pagination";
 import TransactionsTable from "@/components/TransactionsTable";
 import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
@@ -15,15 +16,43 @@ const TransactionHistory = async ({
   if (!accounts) return;
   const accountsData = accounts?.data;
   const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
-  const account = await getAccount({ appwriteItemId });
+  const accountResult = await getAccount({ appwriteItemId });
+
+  // Check for consent error before proceeding
+  if (accountResult?.error === 'consent_required') {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 p-6 bg-gray-50 rounded-lg shadow">
+         <HeaderBox
+          title="Permissions Required"
+          subtext="Please update your bank connection to view transactions."
+        />
+        <p className="text-center text-gray-600">
+          To access your transaction history for this account, you need to grant additional permissions.
+        </p>
+        <PlaidLink
+          user={loggedIn}
+          variant="primary"
+          accessToken={accountResult.accessToken} // Pass the access token for update mode
+        />
+         <p className="text-sm text-gray-500 mt-2">
+          Clicking &apos;Connect Bank&apos; will guide you through the update process.
+        </p>
+      </div>
+    );
+  }
+
+  // Proceed with normal rendering if no consent error
+  const account = accountResult; // Assign if no error
   const rowsPerPage = 10;
-  const totalPages = Math.ceil(account?.transactions.length/ rowsPerPage);
+  // Ensure transactions exist and is an array before calculating pagination
+  const transactions = account?.transactions ?? [];
+  const totalPages = Math.ceil(transactions.length / rowsPerPage);
 
   const indexOfLastTransaction = currentPage * rowsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
-  const currentTransactions = account?.transactions.slice(
+  const currentTransactions = transactions.slice(
     indexOfFirstTransaction, indexOfLastTransaction
-  )
+  );
   return (
     <div className="transactions">
       <div className="transactions-header">
@@ -51,7 +80,7 @@ const TransactionHistory = async ({
         </div> 
         <section className="flex w-full flex-col gap-6">
           <TransactionsTable 
-          transactions={currentTransactions}
+          transactions={currentTransactions} // Pass the sliced transactions
           />
 
 

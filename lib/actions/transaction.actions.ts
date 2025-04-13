@@ -50,6 +50,7 @@ export const getTransactionsByBankId = async ( {bankId}: getTransactionsByBankId
             total:senderTransactions.total + receiverTransactions.total,
             documents: [...senderTransactions.documents, ...receiverTransactions.documents]
         }
+        console.log(transactions);
         return parseStringify(transactions);
     } catch (error) {
         

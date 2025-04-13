@@ -131,22 +131,31 @@ export const logoutAccount = async() => {
   }
 }
 
-export const createLinkToken = async(user:User) => {
+export const createLinkToken = async (user: User, accessToken?: string) => {
   try{
-    const tokenParams = {
+    let tokenParams: any = { // Use 'let' and 'any' or define a proper type that includes optional fields
       user: {
-        client_user_id : user.$id 
+        client_user_id: user.$id,
       },
-      client_name : `${user.firstName}${user.lastName}`,
-      products: ['auth'] as Products[],
+      client_name: `${user.firstName} ${user.lastName}`,
       language: 'en',
-      country_codes: ['US'] as unknown as CountryCode[], /* Change if doesn't work to ['US'] */
+      country_codes: ['US'] as CountryCode[],
+    };
+
+    if (accessToken) {
+      // Update mode for DTM: Use access_token and additional_consented_products
+      tokenParams.access_token = accessToken;
+      tokenParams.additional_consented_products = [Products.Transactions];
+      // Do NOT include the 'products' field in this case as per Plaid DTM docs
+    } else {
+      // Initial link mode: Use products
+      tokenParams.products = ['auth', Products.Transactions] as Products[];
     }
 
     const response = await plaidClient.linkTokenCreate(tokenParams);
 
-    return parseStringify({linkToken : response.data.link_token})
-  } catch (error){
+    return parseStringify({ linkToken: response.data.link_token });
+  } catch (error) {
     console.log(error);
   }
 }
