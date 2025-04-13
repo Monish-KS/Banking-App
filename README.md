@@ -90,19 +90,4 @@ For testing the website, you can use the following credentials:
 
 5.  Open your browser and navigate to `http://localhost:3000`.
 
-## 🕸️ Code Snippets to Copy
-
-*(This section would contain useful code snippets from the project. I'll leave it empty for now, but you can add relevant snippets later.)*
-
-## 🔗 Assets
-
-*(This section would contain links to any relevant assets, such as design files, API documentation, etc. I'll leave it empty for now.)*
-
-## 🚀 More
-
-For a complete understanding of the project, please refer to the tutorial on JavaScript Mastery YouTube channel.
-
-## 🚨 Tutorial
-
-[Link to JavaScript Mastery YouTube Tutorial]
 
