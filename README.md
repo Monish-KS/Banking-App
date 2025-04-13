@@ -52,6 +52,10 @@ For testing the website, you can use the following credentials:
 -   **Email:** testuser@gmail.com
 -   **Password:** testuser123
 
+Use: 
+- **Username:** user_good
+- **Password:** pass_good 
+for connecting bank. You don't have to provide mobile number for connecting bank. Do make sure to check all the boxes while connecting the bank. 
 
 ## 🤸 Quick Start
 
